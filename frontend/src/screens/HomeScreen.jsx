@@ -9,14 +9,14 @@ import Message from '../components/Message.jsx';
 
 const HomeScreen = () => {
 
-  const { data: products, isLoading, isError } = useGetProductsQuery();
+  const { data: products, isLoading, error } = useGetProductsQuery();
 
   return (
     <>
       {isLoading ? (
         <Loader/>
-      ) : isError ? (
-        <Message variant='danger'>{isError.data.message || isError.error}</Message>
+      ) : error ? (
+        <Message variant='danger'>{error?.data?.message || error?.error}</Message>
       ) : (
         <>
           <h1>Latest Products</h1>

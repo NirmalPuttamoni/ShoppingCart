@@ -2,7 +2,8 @@ import { Badge, Navbar, Nav, Container } from 'react-bootstrap';
 import { FaShoppingCart, FaUser } from 'react-icons/fa';
 import { LinkContainer } from 'react-router-bootstrap';
 import { useSelector } from 'react-redux';
-import logo from '../assets/logo.png';
+// import logo from '../assets/logo.png';
+import logo3 from '../assets/logo3.png';
 import React from 'react';
 
 
@@ -16,8 +17,8 @@ const Header = () => {
                 <Container>
                     <LinkContainer to="/" >
                         <Navbar.Brand>
-                            <img src={logo} alt="ProShop" />
-                            ProShop
+                            <img src={logo3} alt="ProShop" width={'40px'}/>
+                            <strong style={{color:'black'}} > Shopping</strong><strong style={{color:'rgb(69, 69, 69)'}}>Cart</strong>
                         </Navbar.Brand>
                     </LinkContainer>
                     <Navbar.Toggle aria-controls="basic-navbar-nav" />

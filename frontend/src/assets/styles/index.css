@@ -37,6 +37,7 @@ table th {
   background: #f4f4f4;
   padding: 10px;
   border: 1px solid #ddd;
+  /* border: 1px solid rgb(69, 69, 69); */
 }
 
 .review button {
@@ -63,5 +64,9 @@ table th {
 .image_center{
   display: flex;
   justify-content: center;
-  align-items: center;
+  /* align-items: center; */
+}
+
+a{
+  text-decoration: none;
 }

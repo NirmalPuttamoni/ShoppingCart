@@ -6,20 +6,20 @@ const notFound = (req, res, next) => {
 
 // throw new Error();
 
-const errorHandler = (err, req, res, next) => {
-    let statusCode = res.statusCode === 200 ? 500 : res.statusCode;
-    let message = err.message;
-    
+const errorHandler = (error, req, res, next) => {
+    let statusCode = res.statusCode === 200 ? 500 : 200;
+    let message = error.message;
     // Check for Mongoose cast ObjectId error
-    if(err.name === 'CastError' && err.kind === 'ObjectId'){
-        message = `🙏Resource not found`;
+    if(error.name === 'CastError' && error.kind === 'ObjectId'){
+        message = 'Resource not found';
         statusCode = 404;
     }
 
     res.status(statusCode).json({
-        message,
-        stack: process.env.NODE_ENV === 'production' ? '🤦‍♂️' : err.stack,
+        message: message,
+        stack: process.env.NODE_ENV === 'production' ? '🤦‍♂️' : error.stack,
     });
+    return;
 };
 
 export { notFound, errorHandler };
