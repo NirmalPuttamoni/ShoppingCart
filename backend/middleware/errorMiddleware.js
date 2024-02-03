@@ -1,5 +1,5 @@
 const notFound = (req, res, next) => {
-    const error = new Error(`Not Found - ${req.originalUrl}`);
+    const error = new Error(`URL Not Found - ${req.originalUrl}`);
     res.status(404);
     next(error);
 };
@@ -7,7 +7,7 @@ const notFound = (req, res, next) => {
 // throw new Error();
 
 const errorHandler = (error, req, res, next) => {
-    let statusCode = res.statusCode === 200 ? 500 : 200;
+    let statusCode = res.statusCode === 200 ? 500 : res.statusCode;
     let message = error.message;
     // Check for Mongoose cast ObjectId error
     if(error.name === 'CastError' && error.kind === 'ObjectId'){

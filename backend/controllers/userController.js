@@ -5,27 +5,27 @@ import generateToken from '../utils/generateToken.js';
 //@desc     Auth user & get token
 //@route    POST /api/users/login
 //@access   Public
-const authUser = asyncHandler(async (req, res) => {
+const authUser =asyncHandler (async (req, res,next) => {
     const { email, password } = req.body;
     const user = await User.findOne({ email });
 
-    if (user && (await user.matchPassword(password))) {
+        if (user && (await user.matchPassword(password))) {
 
-        generateToken(res, user._id);
-
-        res.status(200).json({
-            _id: user._id,
-            name: user.name,
-            email: user.email,
-            isAdmin: user.isAdmin
-        });
-    } else {
-        res.status(401);
-        throw new Error('Invalid email or password');
-    }
+            generateToken(res, user._id);
+    
+            res.json({
+                _id: user._id,
+                name: user.name,
+                email: user.email,
+                isAdmin: user.isAdmin,
+            });
+        } else{
+            res.status(401);
+            throw new Error('Invalid email or password');
+        }
 });
 
-//@desc     Register user
+//@desc     Register new user
 //@route    POST /api/users
 //@access   Public  
 const registerUser = asyncHandler(async (req, res) => {
@@ -38,7 +38,7 @@ const registerUser = asyncHandler(async (req, res) => {
     const user = await User.create({
         name,
         email,
-        password
+        password,
     });
 
     if (user) {
@@ -49,7 +49,7 @@ const registerUser = asyncHandler(async (req, res) => {
             _id: user._id,
             name: user.name,
             email: user.email,
-            isAdmin: user.isAdmin
+            isAdmin: user.isAdmin,
         });
     } else {
         res.status(400);
@@ -63,9 +63,9 @@ const registerUser = asyncHandler(async (req, res) => {
 const logoutUser = asyncHandler(async (req, res) => {
     res.cookie('jwt', '', {
         httpOnly: true,
-        expires: new Date(0)
+        expires: new Date(0),
     });
-    res.status(200).json({ message: 'Logged out succesfully' });
+    res.status(200).json({ message: 'Logged out successfully' });
 });
 
 //@desc     Get user Profile
@@ -74,14 +74,14 @@ const logoutUser = asyncHandler(async (req, res) => {
 const getUserProfile = asyncHandler(async (req, res) => {
     const user = await User.findById(req.user._id);
     if (user) {
-        res.status(200).json({
+        res.json({
             _id: user._id,
             name: user.name,
             email: user.email,
-            isAdmin: user.isAdmin
+            isAdmin: user.isAdmin,
         });
     } else {
-        res.status(400);
+        res.status(404);
         throw new Error('User not found');
     }
 });
@@ -107,14 +107,14 @@ const updateUserProfile = asyncHandler(async (req, res) => {
             isAdmin: updatedUser.isAdmin,
         });
     } else {
-        res.status(400);
+        res.status(404);
         throw new Error('User not found');
     }
 });
 
 //@desc     Get users
 //@route    GET /api/users
-//@access   Private/Admin
+//@access   Private
 const getUsers = asyncHandler(async (req, res) => {
     res.send('get users');
 });
