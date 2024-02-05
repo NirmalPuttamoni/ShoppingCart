@@ -6,7 +6,7 @@ const reviewSchema = mongoose.Schema({
         required: true,
         ref: "User",
     },
-    title: {
+    name: {
         type: String,
         required: true,
     },
@@ -16,7 +16,7 @@ const reviewSchema = mongoose.Schema({
     },
     comment: {
         type: String,
-        required: true,
+        required: false,
     },
 }, { timestamps: true, });
 
@@ -26,7 +26,7 @@ const productSchema = new mongoose.Schema({
         required: true,
         ref: "User",
     },
-    title: {
+    name: {
         type: String,
         required: true,
     },

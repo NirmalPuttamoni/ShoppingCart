@@ -79,14 +79,14 @@ const PlaceOrderScreen = () => {
                         <Col md={1}>
                           <Image
                             src={item.image}
-                            alt={item.title}
+                            alt={item.name}
                             fluid
                             rounded
                           />
                         </Col>
                         <Col>
                           <Link to={`/product/${item.product}`}>
-                            {item.title}
+                            {item.name}
                           </Link>
                         </Col>
                         <Col md={4}>
