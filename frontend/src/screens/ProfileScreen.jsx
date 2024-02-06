@@ -34,7 +34,7 @@ const ProfileScreen = () => {
 
   const submitHandler = async (e) => {
     e.preventDefault();
-    console.log("submitHandler");
+    // console.log("submitHandler");
     if (password !== confirmPassword) {
       toast.error("Passwords do not match");
     } else {

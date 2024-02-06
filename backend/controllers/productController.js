@@ -5,12 +5,15 @@ import Product from "../models/productModel.js";
 //@route    GET /api/products
 //@access   Public
 const getProducts = asyncHandler(async (req, res) => {
-  const pageSize = 8;
-  const page = Number(req.query.pageNumber) || 1;
-  const count = await Product.countDocuments();
-
-  const products = await Product.find({}).limit(pageSize);
-  res.json(products);
+  // const pageSize = 8;
+  // const page = Number(req.query.pageNumber) || 1;
+  // const count = await Product.countDocuments();
+  const keyword = req.query.keyword
+    ? { name: { $regex: req.query.keyword, $options: "i" } }
+    : {};
+  // console.log(keyword);
+  const products = await Product.find({ ...keyword });
+  res.json({ products });
 });
 
 //@desc     Fetch a Product
@@ -34,7 +37,7 @@ const createProduct = asyncHandler(async (req, res) => {
     name: "Sample name",
     price: 0,
     user: req.user._id,
-    image: "/images/sample.jpg",
+    image: "/uploads/sample.jpg",
     brand: "Sample brand",
     category: "Sample category",
     countInStock: 0,
@@ -92,28 +95,24 @@ const deleteProduct = asyncHandler(async (req, res) => {
 const createProductReview = asyncHandler(async (req, res) => {
   const { rating, comment } = req.body;
   const product = await Product.findById(req.params.id);
+  const rr = Number(product.rating.rate);
+  const rc = Number(product.rating.count);
   if (product) {
     const alreadyReviewed = product.reviews.find(
       (review) => review.user.toString() === req.user._id.toString()
     );
     if (alreadyReviewed) {
-      // console.log("..a.......", alreadyReviewed);
-      // console.log("..p.......", product.rating);
+      const oldRating = Number(alreadyReviewed.rating);
+      const numerator = Number(rr * rc) - Number(oldRating) + Number(rating);
+      const denominator = Number(rc);
+  
+      const avgRating = Number(numerator / denominator);
+
       alreadyReviewed.rating = Number(rating);
       alreadyReviewed.comment = comment;
-
-      const avgRating =
-        (product.rating.rate*product.rating.count + rating) /
-        (product.rating.count);
-      
       product.rating.rate = avgRating.toFixed(2);
-
-      // product.rating.rate =
-      //   product.reviews.reduce((acc, review) => acc + review.rating, 0) /
-      //   product.reviews.length;
       await product.save();
       res.status(201).json({ message: "Review Updated" });
-      // throw new Error("Product already reviewed");
     } else {
       const review = {
         name: req.user.name,
@@ -121,20 +120,15 @@ const createProductReview = asyncHandler(async (req, res) => {
         comment,
         user: req.user._id,
       };
-
       product.reviews.push(review);
 
-      // product.rating.rate = product.reviews.length;
-      const avgRating =
-        (product.rating.rate*product.rating.count + rating) /
-        (product.rating.count);
+      const numerator = Number(rr * rc) + Number(rating);
+      const denominator = Number(rc) + Number(1);
       
-      product.rating.rate = avgRating.toFixed(3);
+      const avgRating = Number(numerator / denominator);
 
-      // product.rating.rate =
-      //   product.reviews.reduce((acc, review) => acc + review.rating, 0) /
-      //   product.reviews.length;
-      product.rating.count = product.rating.count + 1;
+      product.rating.rate = avgRating.toFixed(2);
+      product.rating.count = rc + Number(1);
       await product.save();
       res.status(201).json({ message: "Review added" });
     }
@@ -144,6 +138,14 @@ const createProductReview = asyncHandler(async (req, res) => {
   }
 });
 
+//@desc     Get top rated Products
+//@route    GET /api/products/top
+//@access   Public
+const getTopProducts = asyncHandler(async (req, res) => {
+  const products = await Product.find({}).sort({ rating: -1 }).limit(3);
+  res.status(200).json(products);
+});
+
 export {
   getProducts,
   getProductById,
@@ -151,4 +153,5 @@ export {
   updateProduct,
   deleteProduct,
   createProductReview,
+  getTopProducts,
 };

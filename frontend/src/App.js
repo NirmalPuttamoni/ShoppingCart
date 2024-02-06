@@ -16,7 +16,7 @@ const App = () => {
         </Container>
       </main>
       <Footer />
-      <ToastContainer autoClose={2500}/>
+      <ToastContainer autoClose={1500}/>
     </>
   )
 };

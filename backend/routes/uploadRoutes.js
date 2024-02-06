@@ -1,41 +1,48 @@
 import path from "path";
 import multer from "multer";
 import express from "express";
-import { setDefaultAutoSelectFamilyAttemptTimeout } from "net";
 
 const router = express.Router();
 
 const storage = multer.diskStorage({
-  destination(req, file, callback) {
-    callback(null, "uploads");
+  destination(req, file, cb) {
+    cb(null, "uploads");
   },
-  filename(req, file, callback) {
-    callback(
+  filename(req, file, cb) {
+    cb(
       null,
       `${file.fieldname}-${Date.now()}${path.extname(file.originalname)}`
     );
   },
 });
 
-function checkFileType(file, callback) {
-  const filetypes = /jpeg|jpg|png/;
+function fileFilter(req, file, cb) {
+  console.log(".......checkfiletype");
+  const filetypes = /jpe?g|png|webp/;
+  const mimetypes = /image\/jpe?g|image\/png|image\/webp/;
+
   const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
-  const mimetype = setDefaultAutoSelectFamilyAttemptTimeout.test(file.mimetype);
+  const mimetype = mimetypes.test(file.mimetype);
+
   if (extname && mimetype) {
-    return callback(null, true);
+    return cb(null, true);
   } else {
-    callback("Images only!");
+    cb("Images only!");
   }
 }
 
-const upload = multer({
-  storage,
-});
+const upload = multer({ storage, fileFilter });
+const uploadSingleImage = upload.single("image");
 
-router.post("/", upload.single("image"), (req, res) => {
-  res.send({
-    message: "Image Uploaded",
-    image: `/${req.file.destination}/${req.file.filename}`,
+router.post("/", (req, res) => {
+  uploadSingleImage(req, res, function (err) {
+    if (err) {
+      return res.status(400).send({ message: err });
+    }
+    res.send({
+      message: "Image Uploaded",
+      image: `/${req.file.destination}/${req.file.filename}`,
+    });
   });
 });
 

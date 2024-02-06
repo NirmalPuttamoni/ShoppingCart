@@ -12,7 +12,7 @@ import { LinkContainer } from "react-router-bootstrap";
 import { toast } from "react-toastify";
 
 const ProductListScreen = () => {
-  const { data: products, isLoading, error, refetch } = useGetProductsQuery();
+  const { data, isLoading, error, refetch } = useGetProductsQuery({});
 
   const [createProduct, { isLoading: loadingCreate }] =
     useCreateProductMutation();
@@ -21,7 +21,7 @@ const ProductListScreen = () => {
     useDelteProductMutation();
 
   const deleteHandler = async (id) => {
-    if (window.confirm("Are you sure?")) {
+    if (window.confirm("Are you sure you want to delete this product?")) {
       try {
         await delteProduct(id);
         toast.success("Product deleted");
@@ -72,7 +72,7 @@ const ProductListScreen = () => {
             </tr>
           </thead>
           <tbody>
-            {products.map((product) => (
+            {data.products.map((product) => (
               <tr key={product._id}>
                 <td>{product._id}</td>
                 <td width="550px">{product.name}</td>

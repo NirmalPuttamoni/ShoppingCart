@@ -21,6 +21,7 @@ import Message from "../components/Message";
 import { useState } from "react";
 import { addToCart } from "../slices/cartSlice";
 import { toast } from "react-toastify";
+import Meta from "../components/Meta";
 // import { useEffect, useState } from 'react';
 
 const ProductScreen = () => {
@@ -78,6 +79,7 @@ const ProductScreen = () => {
         </Message>
       ) : (
         <>
+        <Meta title={product.name} />
           <Row>
             <Col md={5} className="image_center">
               <Col md={6}>
